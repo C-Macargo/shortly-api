@@ -26,7 +26,30 @@ export async function shortenUrl(req, res) {
 	}
 }
 
-export async function getUrl(req, res) {}
+export async function getUrl(req, res) {
+	const { id } = req.params;
+
+	try {
+		const chosenUrl = await db.query(
+			`SELECT * FROM urls WHERE "id" = $1`,
+			[id]
+		);
+
+		if (chosenUrl.rowCount === 0) {
+			return res.status(404).send("No url with this id");
+		}
+
+		const returning = chosenUrl.rows[0];
+
+		return res.status(200).json({
+			id: returning.id,
+			shortUrl: returning.short_url,
+			url: returning.url,
+		});
+	} catch (err) {
+		return res.status(500).send(err);
+	}
+}
 
 export async function openUrl(req, res) {}
 
