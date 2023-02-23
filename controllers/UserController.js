@@ -2,7 +2,7 @@ import { db } from "../configs/database.connection.js";
 import bcrypt from "bcrypt";
 
 export async function signUp(req, res) {
-	const { email, password, name } = req.body;
+	const { email, name, password, confirmPassword } = req.body;
 	const hashedPassword = bcrypt.hashSync(password, 10);
 
 	try {
@@ -11,7 +11,7 @@ export async function signUp(req, res) {
 			[email]
 		);
 		if (emailExists.rows.length > 0) {
-			return res.status(400).send("email already in use!");
+			return res.status(409).send("email already in use!");
 		}
 
 		const user = await db.query(
@@ -20,7 +20,6 @@ export async function signUp(req, res) {
         `,
 			[name, email, hashedPassword]
 		);
-		console.log(user.rows[0]);
 		return res.status(201).send("user added successfully");
 	} catch (err) {
 		console.log(err);
