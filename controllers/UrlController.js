@@ -51,6 +51,28 @@ export async function getUrl(req, res) {
 	}
 }
 
-export async function openUrl(req, res) {}
+export async function openUrl(req, res) {
+	const { shortUrl } = req.params;
+	try {
+		const chosenUrl = await db.query(
+			`SELECT * FROM urls WHERE "short_url" = $1`,
+			[shortUrl]
+		);
+		if (chosenUrl.rowCount === 0) {
+			return res.status(404).send("Url not found");
+		}
+
+		const updatedVisitCount = chosenUrl.rows[0].visit_count + 1;
+
+		await db.query(
+			`UPDATE urls SET visit_count = $1 WHERE "short_url" = $2`,
+			[updatedVisitCount, shortUrl]
+		);
+
+		return res.redirect(chosenUrl.rows[0].url);
+	} catch (err) {
+		return res.status(500).send(err);
+	}
+}
 
 export async function deleteUrl(req, res) {}
