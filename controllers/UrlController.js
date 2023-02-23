@@ -16,12 +16,11 @@ export async function shortenUrl(req, res) {
         `,
 			[user, url, shortenedUrl]
 		);
-        const returning = shorten.rows[0]
+		const returning = shorten.rows[0];
 
-        const id = returning.id
-        const shortUrl = returning.short_url
-
-		return res.status(201).json({id,shortUrl});
+		return res
+			.status(201)
+			.json({ id: returning.id, shortUrl: returning.short_url });
 	} catch (err) {
 		return res.status(500).send(err);
 	}
