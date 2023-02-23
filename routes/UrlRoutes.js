@@ -9,6 +9,6 @@ const UrlRouter = Router();
 UrlRouter.post("/urls/shorten",validateToken, validateSchema(shortenUrlSchema), shortenUrl);
 UrlRouter.get("/urls/:id", getUrl);
 UrlRouter.get("/urls/open/:shortUrl", openUrl);
-UrlRouter.delete("/urls/:id", deleteUrl);
+UrlRouter.delete("/urls/:id",validateToken, deleteUrl);
 
 export default UrlRouter;

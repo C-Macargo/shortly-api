@@ -75,4 +75,24 @@ export async function openUrl(req, res) {
 	}
 }
 
-export async function deleteUrl(req, res) {}
+export async function deleteUrl(req, res) {
+    const { id } = req.params;
+	const currentSession = res.locals.session;
+    const user = currentSession.rows[0].user_id;
+
+    try{
+    
+    const chosenUrl = await db.query(
+        `DELETE FROM urls WHERE "user_id" = $1 AND "id" =$2`,
+        [user, id]
+    );
+        if (chosenUrl.rowCount === 0){
+            return res.status(401).send("Delete unsuccessful");
+        }
+
+        return res.status(204).send("Ok")
+
+    }catch(err){
+        return res.status(500).send(err);
+    }      
+}
