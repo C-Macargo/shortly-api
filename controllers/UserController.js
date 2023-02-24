@@ -61,9 +61,15 @@ export async function signIn(req, res) {
 				`INSERT INTO sessions (token, user_id) VALUES ($1, $2) RETURNING *`,
 				[token, userId]
 			);
-			return res.status(200).send(insertSession.rows[0].token);
+
+			const returnToken = insertSession.rows[0].token
+
+			return res.status(200).json({ token : returnToken});
 		} else {
-			return res.status(200).send(checkSession.rows[0].token);
+
+			const returnToken = checkSession.rows[0].token
+
+			return res.status(200).json({ token : returnToken});
 		}
 	} catch (err) {
 		res.status(500).send(err.message);
