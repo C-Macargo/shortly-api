@@ -96,3 +96,42 @@ export async function deleteUrl(req, res) {
         return res.status(500).send(err);
     }      
 }
+
+export async function myUser(req, res) {
+	const currentSession = res.locals.session;
+	const user = currentSession.rows[0].user_id;
+
+	try {
+		const userShortens = await db.query(
+			`
+		SELECT 
+		id,
+		short_url AS shortUrl,
+		url,
+		visit_count as visitCount
+		FROM urls WHERE user_id =$1`,
+			[user]
+		);
+
+		const userStats = await db.query(
+			`SELECT id, name FROM users WHERE id =$1`,
+			[user]
+		);
+
+		const visitCountSum = await db.query(
+			`
+			SELECT SUM(visit_count) FROM urls WHERE user_id =$1`,
+			[user]
+		);
+
+		const FinalObject = {
+			...userStats.rows[0],
+			visitCount: visitCountSum.rows[0].sum,
+			shortenedUrls: userShortens.rows,
+		};
+
+		return res.status(200).send(FinalObject);
+	} catch (err) {
+		return res.status(500).send(err);
+	}
+}

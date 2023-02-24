@@ -1,4 +1,4 @@
-import { shortenUrl, getUrl, openUrl, deleteUrl } from "../controllers/UrlController.js"
+import { shortenUrl, getUrl, openUrl, deleteUrl, myUser } from "../controllers/UrlController.js"
 import { Router } from 'express'
 import { validateToken } from "../middlewares/ValidateToken.js";
 import { validateSchema } from "../middlewares/ValidateSchema.js";
@@ -10,5 +10,6 @@ UrlRouter.post("/urls/shorten",validateToken, validateSchema(shortenUrlSchema), 
 UrlRouter.get("/urls/:id", getUrl);
 UrlRouter.get("/urls/open/:shortUrl", openUrl);
 UrlRouter.delete("/urls/:id",validateToken, deleteUrl);
+UrlRouter.get("/users/me",validateToken, myUser);
 
 export default UrlRouter;
