@@ -106,9 +106,9 @@ export async function myUser(req, res) {
 			`
 		SELECT 
 		id,
-		short_url AS shortUrl,
+		short_url AS "shortUrl",
 		url,
-		visit_count as visitCount
+		visit_count as "visitCount"
 		FROM urls WHERE user_id =$1`,
 			[user]
 		);
@@ -126,7 +126,7 @@ export async function myUser(req, res) {
 		const FinalObject = {
 			id: userStats.rows[0].id,
 			name: userStats.rows[0].name,
-			visitCount: userStats.rows[0].visitcount,
+			visitCount: userStats.rows[0].visitcount !== null ? userStats.rows[0].visitcount : 0,
 			shortenedUrls: userShortens.rows,
 		};
 
@@ -135,3 +135,4 @@ export async function myUser(req, res) {
 		return res.status(500).send(err);
 	}
 }
+
