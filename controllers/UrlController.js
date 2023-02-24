@@ -114,19 +114,19 @@ export async function myUser(req, res) {
 		);
 
 		const userStats = await db.query(
-			`SELECT id, name FROM users WHERE id =$1`,
-			[user]
-		);
-
-		const visitCountSum = await db.query(
 			`
-			SELECT SUM(visit_count) FROM urls WHERE user_id =$1`,
+			SELECT id, name,
+			(SELECT SUM(visit_count) FROM urls WHERE user_id = $1) as visitCount
+			FROM users
+			WHERE id = $1
+			`,
 			[user]
 		);
 
 		const FinalObject = {
-			...userStats.rows[0],
-			visitCount: visitCountSum.rows[0].sum,
+			id: userStats.rows[0].id,
+			name: userStats.rows[0].name,
+			visitCount: userStats.rows[0].visitcount,
 			shortenedUrls: userShortens.rows,
 		};
 
