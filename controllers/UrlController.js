@@ -83,13 +83,16 @@ export async function deleteUrl(req, res) {
     try{
     
     const chosenUrl = await db.query(
-        `DELETE FROM urls WHERE "user_id" = $1 AND "id" =$2`,
-        [user, id]
+        `SELECT * FROM urls WHERE "id" =$1`,
+        [id]
     );
-        if (chosenUrl.rowCount === 0){
-            return res.status(401).send("Delete unsuccessful");
-        }
+		console.log(chosenUrl.rows[0])
 
+		if (chosenUrl.rowCount == 0) return res.status(404).send("Id does not exist");
+
+        if (chosenUrl.rows[0].user_id !== user) return res.status(401).send("Id does not belong to this user");
+
+		await db.query (`DELETE FROM urls WHERE id =$1`,[id])
         return res.status(204).send("Ok")
 
     }catch(err){
