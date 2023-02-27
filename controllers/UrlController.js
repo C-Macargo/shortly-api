@@ -86,7 +86,6 @@ export async function deleteUrl(req, res) {
         `SELECT * FROM urls WHERE "id" =$1`,
         [id]
     );
-		console.log(chosenUrl.rows[0])
 
 		if (chosenUrl.rowCount == 0) return res.status(404).send("Id does not exist");
 
